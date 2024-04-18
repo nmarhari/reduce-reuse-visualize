@@ -102,7 +102,7 @@ def graph_insights(_, fig):
     fig_object.write_image(f"images/fig{_}.png")
     time.sleep(1)
 
-    chat = ChatOpenAI(model="gpt-3.5-turbo", max_tokens=256)
+    chat = ChatOpenAI(model="gpt-4-turbo", max_tokens=256)
     image_path = f"images/fig{_}.png"
     base64_image = encode_image(image_path)
     result = chat.invoke(
