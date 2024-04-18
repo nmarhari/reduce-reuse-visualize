@@ -1,0 +1,26 @@
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+html {
+    font-family: 'Lato', sans-serif;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    justify-content: center;
+    padding: 4vh 2vw;
+    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)),url(big-data.png);
+    background-position: center;
+    background-size: cover;
+    color: white;
+}
+
+h2 {
+    text-align: center;
+    justify-content: center;
+    margin-top: 2vh;
+}

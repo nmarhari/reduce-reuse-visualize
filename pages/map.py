@@ -18,7 +18,7 @@ dash.register_page(__name__)
 
 layout = html.Div([
 
-    html.H1('Dashboard', style={'text-align': 'center'}),
+    html.H2('Dashboard', style={'text-align': 'center'}),
 
     dcc.Dropdown(id="slct_year",
                  options=[
