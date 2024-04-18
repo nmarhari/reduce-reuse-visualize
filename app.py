@@ -4,6 +4,10 @@ from dash import Dash, html
 
 app = Dash(__name__, use_pages=True)
 
+external_stylesheets = [
+    'https://use.fontawesome.com/releases/v5.7.1/css/all.css'
+]
+
 app.layout = html.Div([
 
     html.H1('Reduce, Reuse, Visualize'),
