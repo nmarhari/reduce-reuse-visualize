@@ -1,5 +1,5 @@
 import dash
-from dash import Dash, dcc, html, Input, Output, callback, State
+from dash import Dash, dcc, html, Input, Output, callback, State, ctx
 import plotly.express as express
 import plotly.graph_objects as graphObjects
 import pandas
@@ -50,18 +50,47 @@ layout = html.Div([
 
     dcc.Graph(id='my_bee_map', figure={}),
     
-    dbc.Row(
-            [
-                dbc.Col(dbc.Button(id='btn', children='Insights', className='my-2'), width=1)
+    dbc.Row([
+            dbc.Col(dbc.Button(id='btn', children='Insights', className='my-2'), width=1)
+        ],),
+    dbc.Row([
+            dbc.Col(dbc.Spinner(html.Div(id='content', children=''), fullscreen=False), width=6)
+    ],),
+
+    dbc.Row([
+        dbc.Col([
+            dcc.Markdown(
+                "#### Need any further clarification? Ask our AI!\n",
+                style={"textAlign": "left", "whiteSpace": "pre"},
+            ),
+            dbc.Input(
+                id="input-id2",
+                placeholder="Type your question...",
+                type="text",
+            ),
+            dbc.Col([
+                dbc.Button(
+                    id="btn2",
+                    children="Get Insights",
+                    className="m-3",
+                ),
+                dbc.Button(
+                    id="btn2-reset",
+                    children="Reset",
+                    className="m-3",
+                ),
             ],
+            # width=12,
+            ),
+            html.Br(),
+            dcc.Loading(children=html.P(id="output-id2")),
+        ],
+        width=10,
         ),
-        dbc.Row(
-            [
-                dbc.Col(dbc.Spinner(html.Div(id='content', children=''), fullscreen=False), width=6)
-            ],
-        ),
+    ]),
 ])
 
+# Year Chosen Dropdown
 @callback(
     [Output(component_id='output_container', component_property='children'),
      Output(component_id='my_bee_map', component_property='figure')],
@@ -91,6 +120,7 @@ def update_graph(option_slctd):
     )
     return container, fig
 
+# AI Insights Button
 @callback(
     Output('content','children'),
     Input('btn','n_clicks'),
@@ -129,6 +159,56 @@ def graph_insights(_, fig):
         ]
     )
     return result.content
+
+# AI Question Box
+@callback(
+    Output("output-id2", "children"),
+    [Input("btn2", "n_clicks"), Input("btn2-reset", "n_clicks")],
+    State('my_bee_map', 'figure'),
+    State("input-id2", "value"),
+    prevent_initial_call=True,
+)
+def data_insights(_, _reset, fig, value):
+    button_clicked = ctx.triggered_id
+
+    if button_clicked == "btn2":
+        fig_object = go.Figure(fig)
+        fig_object.write_image(f"images/fig{_}.png")
+        time.sleep(1)
+
+        chat = ChatOpenAI(model="gpt-4-turbo", max_tokens=256)
+        image_path = f"images/fig{_}.png"
+        base64_image = encode_image(image_path)
+        
+        # dataset = dfList[active_page - 1]
+        # agent = create_pandas_dataframe_agent(chat, dataset, verbose=True)
+        if value is None:
+            resp_output = "No question provided."
+        else:
+            question = f"{value}"
+            print(value)
+            try:
+                result = chat.invoke ([HumanMessage(
+                    content=[
+                        {"type": "text", "text": question},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}",
+                                "detail": "auto",  # https://platform.openai.com/docs/guides/vision/low-or-high-fidelity-image-understanding
+                            },
+                        },
+                    ]
+                )])
+                print(result.content)
+                # response = agent.invoke(question)
+                # resp_output = f"{response['output']}"
+                resp_output = result.content
+            except:
+                resp_output = "Sorry, your question is out of context"
+        return resp_output
+    elif button_clicked == "btn2-reset":
+        return ""
 
 # --
 #if __name__ == '__main__':
