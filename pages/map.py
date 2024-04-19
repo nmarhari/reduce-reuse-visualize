@@ -32,9 +32,12 @@ dash.register_page(__name__)
 
 layout = html.Div([
 
-    html.H2('Dashboard', style={'text-align': 'center'}),
+    html.H2('Dashboard'),
 
-    dcc.Dropdown(id="slct_year",
+    html.P('This graph shows the number of bee colonies impacted by disease, humans, and other external factors around the United States.'),
+
+    html.Div(id='dropdown-container', children=[
+        dcc.Dropdown(id="slct_year",
                  options=[
                      {"label": "2015", "value": 2015},
                      {"label": "2016", "value": 2016},
@@ -42,8 +45,9 @@ layout = html.Div([
                      {"label": "2018", "value": 2018}],
                  multi=False,
                  value=2015,
-                 style={'width': "40%"}
+                 #style={'width': "40%"}
                  ),
+    ]),
 
     html.Div(id='output_container', children=[]),
     html.Br(),
@@ -115,7 +119,7 @@ def update_graph(option_slctd):
         color='Pct of Colonies Impacted',
         hover_data=['State', 'Pct of Colonies Impacted'],
         color_continuous_scale=express.colors.sequential.YlOrRd,
-        labels={'Pct of Colonies Impacted': '% of Bee Colonies'},
+        labels={'Pct of Colonies Impacted': '% of Bee Colonies Impacted'},
         template='plotly_dark'
     )
     return container, fig

@@ -24,6 +24,13 @@ h2 {
     margin-top: 2vh;
 }
 
+#dropdown-container {
+    justify-content: center;
+    margin: 0 20vw;
+}
+
+
+
 
 /* imported */
 .home-header {
