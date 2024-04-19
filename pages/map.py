@@ -186,7 +186,9 @@ def data_insights(_, _reset, fig, value):
             resp_output = "No question provided."
         else:
             question = f"{value}"
+            question+=" Limit your response to 1000 characters of plain text."
             print(value)
+            print(question)
             try:
                 result = chat.invoke ([HumanMessage(
                     content=[
@@ -204,6 +206,7 @@ def data_insights(_, _reset, fig, value):
                 # response = agent.invoke(question)
                 # resp_output = f"{response['output']}"
                 resp_output = result.content
+                value = ''
             except:
                 resp_output = "Sorry, your question is out of context"
         return resp_output
