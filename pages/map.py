@@ -146,7 +146,7 @@ def graph_insights(_, fig):
             # ),
             HumanMessage(
                 content=[
-                    {"type": "text", "text": "What data insight can we get from this graph?"},
+                    {"type": "text", "text": "What data insight can we get from this graph? Limit your response to 1000 characters of plain text."},
                     {
                         "type": "image_url",
                         "image_url": {
