@@ -1,33 +1,113 @@
 import dash
-from dash import Dash, dcc, html, Input, Output, callback, State, ctx
-import plotly.express as express
-import plotly.graph_objects as graphObjects
-import pandas
-
-#insights
+from dash import Dash, dcc, html, callback, Input, Output, State, ctx
 import dash_bootstrap_components as dbc
-import time
+import plotly.express as px
+import dash_ag_grid as dag
+import pandas as pd
+
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import BaggingClassifier
+from sklearn.metrics import confusion_matrix
 import plotly.graph_objects as go
+
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
+import time
 import base64
 
+# data file and cleaning
+df = pd.read_csv('./datasets/penguins.csv')
+for feat in df.select_dtypes('number').columns:
+    df[feat] = df[feat].fillna(df[feat].median())
+    df['sex'] = df['sex'].fillna(df['sex'].mode()[0])
+cat_feats = ['sex', 'species']
+df = pd.get_dummies(df, columns=cat_feats)
+features = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm',
+       'body_mass_g', 'sex_Female', 'sex_Male', 'species_Adelie',
+       'species_Chinstrap', 'species_Gentoo']
+target = ['island']
+X = df[features]
+y = df[target]
+X_tr, X_ts, y_tr, y_ts = train_test_split(X, y, test_size=.3, random_state=1)
+knn = KNeighborsClassifier().fit(X_tr, y_tr)
+clusters = np.arange(2,15)
+train_scores = []
+test_scores = []
+for cluster in clusters:
+    knn = KNeighborsClassifier(algorithm='auto', n_neighbors=cluster).fit(X_tr, y_tr)
+    train_scores.append(knn.score(X_tr, y_tr))
+    test_scores.append(knn.score(X_ts, y_ts))
+dict_scores  = {'train score':train_scores,
+                'test score':test_scores}
+df_scores = pd.DataFrame(dict_scores, index=clusters)
+clusters[np.argmax(test_scores)]
+bag = BaggingClassifier(estimator=KNeighborsClassifier(n_neighbors=5),
+                        random_state=42).fit(X_tr, y_tr)
 
+#visualization
+y_pred = pd.Series(bag.predict(X_ts))
+test = pd.concat([X_ts.reset_index(), y_pred], axis=1)
+conf_matrix = confusion_matrix(y_ts, y_pred) #
+features = ['bill_length_mm','flipper_length_mm', 'body_mass_g']
+classes = test[0].value_counts().index
 
-# function for decoding graph image
-def encode_image(image_path):
-    with open(image_path, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
+df_centroids = pd.DataFrame()
+for c in classes:
+    dict_centroids = {}
+    for feat in features:
+        mean = test[test[0]==c][feat].mean()
+        dict_centroids[feat] = mean
+    dict_centroids['predict class'] = c
+    centroids = pd.DataFrame(dict_centroids, index=[0])
+    df_centroids = pd.concat([df_centroids, centroids], axis=0)
+colors = ['blue', 'red', 'green']
+fig = go.Figure()
 
-#df = pandas.read_csv("<file>")
-df = pandas.read_csv("./datasets/intro_bees.csv")
+for i, label in enumerate(set(classes)):
+    fig.add_trace(go.Scatter3d(
+        x=test[test[0]==label]['bill_length_mm'],
+        y=test[test[0]==label]['flipper_length_mm'],
+        z=test[test[0]==label]['body_mass_g'],
+        mode='markers',
+        name=f"{label}<br>Species<br>Sample",
+        marker={'symbol': 'circle'},
+        hovertemplate = 
+        'Bill: %{x}' +
+        '<br>Flipper: %{y}' +
+        '<br>Mass: %{z}',
+    )
+)
 
-df = df.groupby(['State', 'ANSI', 'Affected by', 'Year', 'state_code'])[['Pct of Colonies Impacted']].mean()
-df.reset_index(inplace=True)
-print(df[:5])
+for i, label in enumerate(set(classes)):
+    # Add centroids as separate points
+    fig.add_trace(go.Scatter3d(
+        x=df_centroids[df_centroids['predict class']==label]['bill_length_mm'],
+        y=df_centroids[df_centroids['predict class']==label]['flipper_length_mm'],
+        z=df_centroids[df_centroids['predict class']==label]['body_mass_g'],
+        mode='markers',
+        name=f"Centroid<br>{label}",
+        marker={'symbol': 'circle-open', 'color': colors[i],
+                'size':35},
+        hovertemplate = 
+        'Bill: %{x}' +
+        '<br>Flipper: %{y}' +
+        '<br>Mass: %{z}',
+    )
+)
+      
+fig.update_layout(
+    scene=dict(
+        xaxis_title='Bill Length (mm)',
+        yaxis_title='Flipper Length (mm)',
+        zaxis_title='Body Mass (g)',
+    ),
+    title='Penguin Species\' Measurements with Centroids',
+)
 
-# app
-#app = Dash(__name__)
 dash.register_page(__name__, suppress_callback_exceptions=True)
 
 layout = html.Div([
@@ -36,29 +116,12 @@ layout = html.Div([
 
     html.P('This graph shows the number of bee colonies impacted by disease, humans, and other external factors around the United States.'),
 
-    html.Div(id='dropdown-container', children=[
-        dcc.Dropdown(id="slct_year",
-                 options=[
-                     {"label": "2015", "value": 2015},
-                     {"label": "2016", "value": 2016},
-                     {"label": "2017", "value": 2017},
-                     {"label": "2018", "value": 2018}],
-                 multi=False,
-                 value=2015,
-                 #style={'width': "40%"}
-                 ),
-    ]),
-
-    html.Div(id='output_container', children=[]),
-    html.Br(),
-
-    dcc.Graph(id='my_bee_map', figure={}),
-    
+    dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     dbc.Row([
             dbc.Col(dbc.Button(id='btn', children='Insights', className='my-2'), width=1)
         ],),
     dbc.Row([
-            dbc.Col(dbc.Spinner(html.Div(id='content', children=''), fullscreen=False), width=6)
+            dbc.Col(dbc.Spinner(html.Div(id='insight-scikit', children=''), fullscreen=False), width=6)
     ],),
 
     dbc.Row([
@@ -87,47 +150,23 @@ layout = html.Div([
             # width=12,
             ),
             html.Br(),
-            dcc.Loading(children=html.P(id="output-id2")),
+            dcc.Loading(children=html.P(id="ask-scikit-output")),
         ],
         width=10,
         ),
     ]),
 ])
 
-# Year Chosen Dropdown
-@callback(
-    [Output(component_id='output_container', component_property='children'),
-     Output(component_id='my_bee_map', component_property='figure')],
-    [Input(component_id='slct_year', component_property='value')]
-)
-def update_graph(option_slctd):
-    print(option_slctd)
-    print(type(option_slctd))
-
-    container = "The year chosen by user was: {}".format(option_slctd)
-
-    dff = df.copy()
-    dff = dff[dff["Year"] == option_slctd]
-    dff = dff[dff["Affected by"] == "Varroa_mites"]
-
-    # Plotly Express
-    fig = express.choropleth(
-        data_frame=dff,
-        locationmode='USA-states',
-        locations='state_code',
-        scope="usa",
-        color='Pct of Colonies Impacted',
-        hover_data=['State', 'Pct of Colonies Impacted'],
-        color_continuous_scale=express.colors.sequential.YlOrRd,
-        labels={'Pct of Colonies Impacted': '% of Bee Colonies Impacted'}
-    )
-    return container, fig
+# function for decoding graph image
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode('utf-8')
 
 # AI Insights Button
 @callback(
-    Output('content','children'),
+    Output('insight-scikit','children'),
     Input('btn','n_clicks'),
-    State('my_bee_map','figure'),
+    State('penguin-scatter','figure'),
     prevent_initial_call=True
 )
 def graph_insights(_, fig):
@@ -149,7 +188,7 @@ def graph_insights(_, fig):
             # ),
             HumanMessage(
                 content=[
-                    {"type": "text", "text": "What data insight can we get from this graph? Limit your response to 1000 characters of plain text."},
+                    {"type": "text", "text": "What data insight can we get from this graph? Limit your response to 1000 characters of plain text (No Markdown)."},
                     {
                         "type": "image_url",
                         "image_url": {
@@ -165,9 +204,9 @@ def graph_insights(_, fig):
 
 # AI Question Box
 @callback(
-    Output("output-id2", "children"),
+    Output("ask-scikit-output", "children"),
     [Input("btn2", "n_clicks"), Input("btn2-reset", "n_clicks")],
-    State('my_bee_map', 'figure'),
+    State('penguin-scatter', 'figure'),
     State("input-id2", "value"),
     prevent_initial_call=True,
 )
@@ -189,7 +228,7 @@ def data_insights(_, _reset, fig, value):
             resp_output = "No question provided."
         else:
             question = f"{value}"
-            question+=" Limit your response to 1000 characters of plain text."
+            question+=" Limit your response to 1000 characters of plain text (No Markdown)."
             print(value)
             print(question)
             try:
@@ -215,7 +254,3 @@ def data_insights(_, _reset, fig, value):
         return resp_output
     elif button_clicked == "btn2-reset":
         return ""
-
-# --
-#if __name__ == '__main__':
-  #  run_server(debug=True)

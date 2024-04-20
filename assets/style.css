@@ -29,7 +29,9 @@ h2 {
     margin: 0 20vw;
 }
 
-
+#penguin-scatter {
+    height: 75vh;
+}
 
 
 /* imported */
