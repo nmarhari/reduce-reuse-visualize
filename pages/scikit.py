@@ -73,7 +73,7 @@ for i, label in enumerate(set(classes)):
         y=test[test[0]==label]['flipper_length_mm'],
         z=test[test[0]==label]['body_mass_g'],
         mode='markers',
-        name=f"{label}<br>Species<br>Sample",
+        name=f"{label}<br>Island<br>Sample",
         marker={'symbol': 'circle'},
         hovertemplate = 
         'Bill: %{x}' +
@@ -105,7 +105,7 @@ fig.update_layout(
         yaxis_title='Flipper Length (mm)',
         zaxis_title='Body Mass (g)',
     ),
-    title='Penguin Species\' Measurements with Centroids',
+    title='Penguin Measurements with Centroids',
 )
 
 dash.register_page(__name__, suppress_callback_exceptions=True)
@@ -114,11 +114,11 @@ layout = html.Div([
 
     html.H2('Dashboard'),
 
-    html.P('This graph shows the number of bee colonies impacted by disease, humans, and other external factors around the United States.'),
+    html.P('This graph shows measurements of penguin\'s features separated by which island they reside on.'),
 
     dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     dbc.Row([
-            dbc.Col(dbc.Button(id='btn', children='Insights', className='my-2'), width=1)
+            dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),
     dbc.Row([
             dbc.Col(dbc.Spinner(html.Div(id='insight-scikit', children=''), fullscreen=False), width=6)
@@ -127,7 +127,7 @@ layout = html.Div([
     dbc.Row([
         dbc.Col([
             dcc.Markdown(
-                "#### Need any further clarification? Ask our AI!\n",
+                "#### Ask a question about this graph:\n",
                 style={"textAlign": "left", "whiteSpace": "pre"},
             ),
             dbc.Input(
