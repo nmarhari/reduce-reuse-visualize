@@ -149,7 +149,7 @@ def graph_insights(_, fig):
             # ),
             HumanMessage(
                 content=[
-                    {"type": "text", "text": "What data insight can we get from this graph? Limit your response to 1000 characters of plain text."},
+                    {"type": "text", "text": "What data insight can we get from this graph? Limit your response to 1000 characters of plain text (No Markdown)."},
                     {
                         "type": "image_url",
                         "image_url": {
@@ -189,7 +189,7 @@ def data_insights(_, _reset, fig, value):
             resp_output = "No question provided."
         else:
             question = f"{value}"
-            question+=" Limit your response to 1000 characters of plain text."
+            question+=" Limit your response to 1000 characters of plain text (No Markdown)."
             print(value)
             print(question)
             try:
