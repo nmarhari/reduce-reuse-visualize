@@ -1,0 +1,11 @@
+plotly
+dash
+pandas
+dash-bootstrap-components
+langchain-core
+langchain-openai
+kaleido
+python-dotenv
+scikit-learn
+dash-ag-grid
+Flask
