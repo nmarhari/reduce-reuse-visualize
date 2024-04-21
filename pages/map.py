@@ -42,12 +42,6 @@ layout = html.Div(id='map-container', children=[
 
     html.P('This graph shows the number of bee colonies impacted by disease, humans, and other external factors around the United States.'),
 
-    # EDA Table
-    html.Div([
-        html.H3('Exploratory Data Analysis Statistics'),
-        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-bees')
-    ]),
-
     html.Div(id='dropdown-container', children=[
         dcc.Dropdown(id="slct_year",
                  options=[
@@ -66,6 +60,12 @@ layout = html.Div(id='map-container', children=[
 
     dcc.Graph(id='my_bee_map', figure={}, style={'height:': '60vh'}),
     
+    # EDA Table
+    html.Div([
+        html.H3('Exploratory Data Analysis Statistics'),
+        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-bees')
+    ]),
+
     dbc.Row([
             dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),

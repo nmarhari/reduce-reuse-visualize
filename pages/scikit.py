@@ -119,14 +119,12 @@ layout = html.Div(id='scikit-container', children=[
 
     html.P('This graph shows measurements of penguin\'s features separated by which island they reside on.'),
 
-
+    dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     # EDA Table
     html.Div([
         html.H3('Exploratory Data Analysis Statistics'),
         dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-penguins')
     ]),
-
-    dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     dbc.Row([
             dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),
