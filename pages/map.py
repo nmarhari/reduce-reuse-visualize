@@ -30,7 +30,7 @@ df.reset_index(inplace=True)
 #app = Dash(__name__)
 dash.register_page(__name__, suppress_callback_exceptions=True)
 
-layout = html.Div([
+layout = html.Div(id='map-container', children=[
 
     html.H2('Dashboard'),
 
@@ -52,27 +52,27 @@ layout = html.Div([
     html.Div(id='output_container', children=[]),
     html.Br(),
 
-    dcc.Graph(id='my_bee_map', figure={}),
+    dcc.Graph(id='my_bee_map', figure={}, style={'height:': '60vh'}),
     
     dbc.Row([
-            dbc.Col(dbc.Button(id='btn', children='Insights', className='my-2'), width=1)
+            dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),
     dbc.Row([
-            dbc.Col(dbc.Spinner(html.Div(id='content', children=''), fullscreen=False), width=6)
+            dbc.Col(dcc.Loading(html.Div(style={'margin':'0 20vw'},id='content', children=''), fullscreen=False), width=6)
     ],),
 
     dbc.Row([
-        dbc.Col([
+        dbc.Col(id='question-row', children=[
             dcc.Markdown(
                 "#### Need any further clarification? Ask our AI!\n",
-                style={"textAlign": "left", "whiteSpace": "pre"},
+                style={"whiteSpace": "pre", 'margin': '.5vh .5vh'},
             ),
             dbc.Input(
                 id="input-id2",
                 placeholder="Type your question...",
                 type="text",
             ),
-            dbc.Col([
+            dbc.Col(style={'margin': '.5vh .5vh'}, children=[
                 dbc.Button(
                     id="btn2",
                     children="Get Insights",
@@ -87,7 +87,7 @@ layout = html.Div([
             # width=12,
             ),
             html.Br(),
-            dcc.Loading(children=html.P(id="output-id2")),
+            dcc.Loading(children=html.P(style={'margin':'0 20vw', 'margin-bottom':'2vh'},id="output-id2")),
         ],
         width=10,
         ),
