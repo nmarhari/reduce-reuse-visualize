@@ -121,7 +121,7 @@ layout = html.Div(id='scikit-container', children=[
             dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),
     dbc.Row([
-            dbc.Col(dbc.Spinner(html.Div(id='insight-scikit', children=''), fullscreen=False), width=6)
+            dbc.Col(dcc.Loading(html.Div(style={'margin':'0 20vw'},id='insight-scikit', children=''), fullscreen=False), width=6)
     ],),
 
     dbc.Row(id='question-row', children=[
@@ -134,6 +134,7 @@ layout = html.Div(id='scikit-container', children=[
                 id="input-id2",
                 placeholder="Type your question...",
                 type="text",
+
             ),
             dbc.Col(style={'margin': '.5vh .5vh'}, children=[
                 dbc.Button(
@@ -150,7 +151,7 @@ layout = html.Div(id='scikit-container', children=[
             # width=12,
             ),
             html.Br(),
-            dcc.Loading(children=html.P(id="ask-scikit-output")),
+            dcc.Loading(children=html.P(style={'margin':'0 20vw'},id="ask-scikit-output")),
         ],
         width=10,
         ),
