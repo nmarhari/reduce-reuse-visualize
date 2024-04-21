@@ -108,6 +108,9 @@ fig.update_layout(
     title='Penguin Measurements with Centroids',
 )
 
+stats_description = df.describe().reset_index().round(3)
+eda_table = dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True)
+
 dash.register_page(__name__, suppress_callback_exceptions=True)
 
 layout = html.Div(id='scikit-container', children=[
@@ -115,6 +118,13 @@ layout = html.Div(id='scikit-container', children=[
     html.H2('Dashboard'),
 
     html.P('This graph shows measurements of penguin\'s features separated by which island they reside on.'),
+
+
+    # EDA Table
+    html.Div([
+        html.H3('Exploratory Data Analysis Statistics'),
+        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-penguins')
+    ]),
 
     dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     dbc.Row([

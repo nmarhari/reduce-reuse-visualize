@@ -28,6 +28,12 @@ df.reset_index(inplace=True)
 
 # app
 #app = Dash(__name__)
+
+
+stats_description = df.describe().round(3).reset_index()
+eda_table = dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-bees')
+
+
 dash.register_page(__name__, suppress_callback_exceptions=True)
 
 layout = html.Div(id='map-container', children=[
@@ -35,6 +41,12 @@ layout = html.Div(id='map-container', children=[
     html.H2('Dashboard'),
 
     html.P('This graph shows the number of bee colonies impacted by disease, humans, and other external factors around the United States.'),
+
+    # EDA Table
+    html.Div([
+        html.H3('Exploratory Data Analysis Statistics'),
+        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-bees')
+    ]),
 
     html.Div(id='dropdown-container', children=[
         dcc.Dropdown(id="slct_year",
