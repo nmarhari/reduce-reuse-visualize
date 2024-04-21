@@ -71,7 +71,7 @@ layout = html.Div(id='map-container', children=[
     dbc.Row([
         dbc.Col(id='question-row', children=[
             dcc.Markdown(
-                "#### Need any further clarification? Ask our AI!\n",
+                "#### Ask a question about this graph:\n",
                 style={"whiteSpace": "pre", 'margin': '.5vh .5vh'},
             ),
             dbc.Input(
