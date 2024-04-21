@@ -31,8 +31,24 @@ h2 {
 
 #penguin-scatter {
     height: 75vh;
+    width: 75vw;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+#top-text {
+    text-decoration: none;
+    color: white;
+}
+
+#scikit-container {
+    justify-content: center;
+    text-align: center;
+}
+
+#question-row {
+    margin: 0px 2vh;
+}
 
 /* imported */
 .home-header {
@@ -42,6 +58,7 @@ h2 {
     background-position: center;
     background-size: cover;
     position: relative;
+    overflow-y: hidden;
 }
 
 nav {

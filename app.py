@@ -10,7 +10,9 @@ external_stylesheets = [
 
 app.layout = html.Div([
 
-    html.H1('Reduce, Reuse, Visualize'),
+    html.H1([
+        html.A(id='top-text', children='Reduce, Reuse, Visualize', href="/")
+    ]),
     dash.page_container
 ])
 

@@ -110,7 +110,7 @@ fig.update_layout(
 
 dash.register_page(__name__, suppress_callback_exceptions=True)
 
-layout = html.Div([
+layout = html.Div(id='scikit-container', children=[
 
     html.H2('Dashboard'),
 
@@ -124,18 +124,18 @@ layout = html.Div([
             dbc.Col(dbc.Spinner(html.Div(id='insight-scikit', children=''), fullscreen=False), width=6)
     ],),
 
-    dbc.Row([
+    dbc.Row(id='question-row', children=[
         dbc.Col([
             dcc.Markdown(
                 "#### Ask a question about this graph:\n",
-                style={"textAlign": "left", "whiteSpace": "pre"},
+                style={"whiteSpace": "pre", 'margin': '.5vh .5vh'},
             ),
             dbc.Input(
                 id="input-id2",
                 placeholder="Type your question...",
                 type="text",
             ),
-            dbc.Col([
+            dbc.Col(style={'margin': '.5vh .5vh'}, children=[
                 dbc.Button(
                     id="btn2",
                     children="Get Insights",

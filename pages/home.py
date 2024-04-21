@@ -17,23 +17,25 @@ layout = html.Div(className="home-header", children=[
     # ]),
     # 
     html.Div(className="text-box", children=[
-        html.P("Use any of the navigation links to continue."),
+        
         html.Div(className="home-links", children=[
             html.Ul([
                 html.Li([
                     html.A(href="./map", className="home-button", children="Map")
                 ]),
                 html.Li([
-                    html.A(href="./map", className="home-button", children="Map")
+                    html.A(href="./scikit", className="home-button", children="Scatter Plot")
                 ]),
-                html.Li([
-                    html.A(href="./map", className="home-button", children="Map")
-                ]),
-                html.Li([
-                    html.A(href="./map", className="home-button", children="Map")
-                ])
+                # html.Li([
+                #     html.A(href="./map", className="home-button", children="Map")
+                # ]),
+                # html.Li([
+                #     html.A(href="./map", className="home-button", children="Map")
+                # ])
             ])
-        ])
+        ]),
+
+        html.P("Use any of the navigation links to continue.")
     ])
     
 ])
