@@ -24,6 +24,12 @@ h2 {
     margin-top: 2vh;
 }
 
+h3 {
+    text-align: center;
+    justify-content: center;
+    margin-top: 2vh;
+}
+
 #dropdown-container {
     justify-content: center;
     margin: 0 20vw;
@@ -35,6 +41,27 @@ h2 {
     margin-left: auto;
     margin-right: auto;
 }
+
+#EDA-penguins {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#EDA-penguins th, #EDA-penguins td {
+    padding-left: 15px; 
+    padding-right: 15px; 
+}
+
+#EDA-bees {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#EDA-bees th, #EDA-bees td {
+    padding-left: 15px; 
+    padding-right: 15px; 
+}
+
 
 #top-text {
     text-decoration: none;
