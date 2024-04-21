@@ -119,17 +119,11 @@ layout = html.Div(id='scikit-container', children=[
 
     html.P('This graph shows measurements of penguin\'s features separated by which island they reside on.'),
 
-
-    # EDA Table
-    html.Div([
-        html.H3('Exploratory Data Analysis Statistics'),
-        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-penguins')
-    ]),
-
     dcc.Graph(figure = fig, id='penguin-scatter', style={'height:': '60vh'}),
     dbc.Row([
             dbc.Col(dbc.Button(id='btn', children='About this graph', className='my-2'), width=1)
         ],),
+    html.Br(),
     dbc.Row([
             dbc.Col(dcc.Loading(html.Div(style={'margin':'0 20vw'},id='insight-scikit', children=''), fullscreen=False), width=6)
     ],),
@@ -161,10 +155,17 @@ layout = html.Div(id='scikit-container', children=[
             # width=12,
             ),
             html.Br(),
-            dcc.Loading(children=html.P(style={'margin':'0 20vw', 'margin-bottom':'2vh'},id="ask-scikit-output")),
+            dcc.Loading(children=html.P(style={'margin':'0 20vw'},id="ask-scikit-output")),
         ],
         width=10,
         ),
+
+    # EDA Table
+    html.Div(style={'margin-bottom':'2vh'}, children=[
+        html.H3('Exploratory Data Analysis Statistics'),
+        dbc.Table.from_dataframe(stats_description, striped=True, bordered=True, hover=True, id='EDA-penguins')
+    ]),
+
     ]),
 ])
 
