@@ -151,7 +151,7 @@ layout = html.Div(id='scikit-container', children=[
             # width=12,
             ),
             html.Br(),
-            dcc.Loading(children=html.P(style={'margin':'0 20vw'},id="ask-scikit-output")),
+            dcc.Loading(children=html.P(style={'margin':'0 20vw', 'margin-bottom':'2vh'},id="ask-scikit-output")),
         ],
         width=10,
         ),

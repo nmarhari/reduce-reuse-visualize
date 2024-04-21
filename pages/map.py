@@ -24,7 +24,7 @@ df = pandas.read_csv("./datasets/intro_bees.csv")
 
 df = df.groupby(['State', 'ANSI', 'Affected by', 'Year', 'state_code'])[['Pct of Colonies Impacted']].mean()
 df.reset_index(inplace=True)
-print(df[:5])
+# print(df[:5])
 
 # app
 #app = Dash(__name__)
@@ -101,8 +101,8 @@ layout = html.Div([
     [Input(component_id='slct_year', component_property='value')]
 )
 def update_graph(option_slctd):
-    print(option_slctd)
-    print(type(option_slctd))
+    # print(option_slctd)
+    # print(type(option_slctd))
 
     container = "The year chosen by user was: {}".format(option_slctd)
 
